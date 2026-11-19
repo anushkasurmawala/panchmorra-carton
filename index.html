@@ -94,6 +94,17 @@ function start(){
      vec3 gold=mix(vec3(.61,.38,.12),vec3(1.,.82,.40),smoothstep(.23,.76,value));
      if(stockIsPink)gold=mix(vec3(.40,.23,.065),vec3(.67,.44,.14),smoothstep(.20,.84,value));
      print=mix(board,gold,inkMask);
+     if(brandZone){
+       // Preserve the original logo's detailed artwork and internal highlights.
+       vec3 originalLogo=texture2D(ink,vUV).rgb;
+       float logoCoverage=smoothstep(.085,.20,value);
+       vec3 logoGold=originalLogo;
+       // Warm neutral highlights while retaining every contour and gold shade.
+       float paleHighlight=(1.-smoothstep(.01,.12,chroma))*smoothstep(.35,.70,value);
+       logoGold=mix(logoGold,vec3(value,value*.84,value*.51),paleHighlight*.32);
+       if(stockIsPink)logoGold*=vec3(.77,.73,.65);
+       print=mix(board,logoGold,logoCoverage);
+     }
    }
    if(!colouredStock && printZone){
      float inkMask=selectedDesign<2 ? 1.-smoothstep(.29,.62,value) : smoothstep(.27,.48,value);
